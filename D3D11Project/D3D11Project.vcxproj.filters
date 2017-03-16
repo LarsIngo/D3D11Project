@@ -5,6 +5,9 @@
     <ClCompile Include="D3D11Renderer.cpp">
       <Filter>D3D11</Filter>
     </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>D3D11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tools">
@@ -20,6 +23,18 @@
     </ClInclude>
     <ClInclude Include="CPUTimer.hpp">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="DxAssert.hpp">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="DxHelp.hpp">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Timer.hpp">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.hpp">
+      <Filter>D3D11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

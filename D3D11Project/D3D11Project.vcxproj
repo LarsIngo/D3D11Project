@@ -153,12 +153,17 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="D3D11Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Renderer.hpp" />
     <ClInclude Include="CPUTimer.hpp" />
+    <ClInclude Include="DxAssert.hpp" />
+    <ClInclude Include="DxHelp.hpp" />
+    <ClInclude Include="D3D11Timer.hpp" />
+    <ClInclude Include="FrameBuffer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

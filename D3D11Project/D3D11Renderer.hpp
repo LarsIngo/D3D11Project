@@ -1,6 +1,8 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
+#include <d3d11.h>
+class FrameBuffer;
 
 class D3D11Renderer
 {
@@ -19,6 +21,16 @@ class D3D11Renderer
         // Close window.
         void Close();
 
+        // Present.
+        // frameBuffer Frame buffer to present to window.
+        void Present(FrameBuffer* frameBuffer);
+
+        // D3D11 device.
+        ID3D11Device* mDevice;
+
+        // D3D11 device context.
+        ID3D11DeviceContext* mDeviceContext;
+
     private:
         void InitialiseGLFW();
         void DeInitialiseGLFW();
@@ -30,4 +42,10 @@ class D3D11Renderer
         unsigned int mWinHeight;
         bool mClose;
         GLFWwindow* mWindow;
+
+        //D3D11
+        IDXGISwapChain* mSwapChain;
+        FrameBuffer* mWinFrameBuffer;
+        ID3D11SamplerState* mSamplerState;
+        ID3D11RasterizerState* mRasterizerState;
 };
