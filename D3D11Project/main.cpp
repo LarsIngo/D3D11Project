@@ -1,8 +1,11 @@
 #include <crtdbg.h>
+#include <iostream>
 
 #include "D3D11Renderer.hpp"
 #include "CPUTimer.hpp"
 #include "FrameBuffer.hpp"
+#include "ParticleSystem.hpp"
+#include "Scene.hpp"
 
 int main()
 {
@@ -15,18 +18,32 @@ int main()
     ID3D11Device* device = renderer.mDevice;
     ID3D11DeviceContext* deviceContext = renderer.mDeviceContext;
     FrameBuffer frameBuffer(device, deviceContext, width, height);
+
+    ParticleSystem particleSystem(device, deviceContext);
+
+    Scene scene(device, deviceContext);
+    {
+        Particle particle;
+        std::vector<Particle> particleList;
+        particleList.push_back(particle);
+        scene.AddParticles(particleList);
+    }
     // --- INIT --- //
 
     // +++ MAIN LOOP +++ //
     float dt = 0.f;
     while (renderer.Running())
     {
+        std::cout << "CPU TIMER: " << dt << std::endl;
         CPUTIMER(dt);
         // +++ UPDATE +++ //
+        particleSystem.Update(&scene);
         // --- UPDATE --- //
 
         // +++ RENDER +++ //
         frameBuffer.ClearAll(0.2f, 0.2f, 0.2f);
+
+        particleSystem.Render(&scene, &frameBuffer);
         // --- RENDER --- //
 
         // +++ PRESENET +++ //

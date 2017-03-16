@@ -156,6 +156,9 @@
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="D3D11Renderer.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="StorageBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Renderer.hpp" />
@@ -164,6 +167,24 @@
     <ClInclude Include="DxHelp.hpp" />
     <ClInclude Include="D3D11Timer.hpp" />
     <ClInclude Include="FrameBuffer.hpp" />
+    <ClInclude Include="Particle.hpp" />
+    <ClInclude Include="ParticleSystem.hpp" />
+    <ClInclude Include="Scene.hpp" />
+    <ClInclude Include="StorageBuffer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\Particles_Render_GS.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="resources\shaders\Particles_Render_PS.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="resources\shaders\Particles_Render_VS.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="resources\shaders\Particles_Update_CS.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

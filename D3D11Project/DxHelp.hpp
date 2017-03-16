@@ -63,7 +63,7 @@ namespace DxHelp
     // shader Created shader.
     // inputDesc Input layout description.
     // inputLayout Input layout.
-    void CreateVS(ID3D11Device* device, const char* shaderPath, const char* entry, ID3D11VertexShader** shader, std::vector<D3D11_INPUT_ELEMENT_DESC>* inputDesc = nullptr, ID3D11InputLayout** inputLayout = nullptr);
+    void CreateVS(ID3D11Device* device, const char* shaderPath, const char* entry, ID3D11VertexShader** shader);
 
     // Create geometry shader.
     // device D3D11 device.
@@ -76,6 +76,12 @@ namespace DxHelp
     // shaderPath Path to shader.
     // shader Created shader.
     void CreatePS(ID3D11Device* device, const char* shaderPath, const char* entry, ID3D11PixelShader** shader);
+
+    // Create compute shader.
+    // device D3D11 device.
+    // shaderPath Path to shader.
+    // shader Created shader.
+    void CreateCS(ID3D11Device* device, const char* shaderPath, const char* entry, ID3D11ComputeShader** shader);
 
     // Copy texture.
     // deviceContext D3D11 device context.
@@ -205,7 +211,7 @@ inline void DxHelp::WriteBuffer(ID3D11DeviceContext* deviceContext, T* data, uns
     deviceContext->Unmap(buffer, 0);
 }
 
-inline void DxHelp::CreateVS(ID3D11Device* device, const char* shaderPath, const char* entry, ID3D11VertexShader** shader, std::vector<D3D11_INPUT_ELEMENT_DESC>* inputDesc, ID3D11InputLayout** inputLayout)
+inline void DxHelp::CreateVS(ID3D11Device* device, const char* shaderPath, const char* entry, ID3D11VertexShader** shader)
 {
     std::string s(shaderPath);
     std::wstring path(s.begin(), s.end());
@@ -235,16 +241,6 @@ inline void DxHelp::CreateVS(ID3D11Device* device, const char* shaderPath, const
         shader
     ), S_OK);
 
-    if (inputDesc != nullptr) {
-        DxAssert(device->CreateInputLayout(
-            inputDesc->data(),
-            inputDesc->size(),
-            compiledShader->GetBufferPointer(),
-            compiledShader->GetBufferSize(),
-            inputLayout
-        ), S_OK);
-        compiledShader->Release();
-    }
     compiledShader->Release();
 }
 
@@ -305,6 +301,38 @@ inline void DxHelp::CreatePS(ID3D11Device* device, const char* shaderPath, const
     }
 
     DxAssert(device->CreatePixelShader(
+        compiledShader->GetBufferPointer(),
+        compiledShader->GetBufferSize(),
+        NULL,
+        shader
+    ), S_OK);
+    compiledShader->Release();
+}
+
+inline void DxHelp::CreateCS(ID3D11Device* device, const char* shaderPath, const char* entry, ID3D11ComputeShader** shader)
+{
+    std::string s(shaderPath);
+    std::wstring path(s.begin(), s.end());
+    ID3DBlob* compiledShader = nullptr;
+    ID3DBlob* errorBlob = nullptr;
+    HRESULT hr = D3DCompileFromFile(
+        path.c_str(),
+        nullptr,
+        nullptr,
+        entry,
+        "cs_5_0",
+        0,
+        0,
+        &compiledShader,
+        &errorBlob
+    );
+    if (FAILED(hr)) {
+        std::string errorMsg = (char*)errorBlob->GetBufferPointer();
+        OutputDebugStringA(errorMsg.c_str());
+        errorBlob->Release();
+    }
+
+    DxAssert(device->CreateComputeShader(
         compiledShader->GetBufferPointer(),
         compiledShader->GetBufferSize(),
         NULL,

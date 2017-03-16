@@ -8,6 +8,15 @@
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>D3D11</Filter>
     </ClCompile>
+    <ClCompile Include="StorageBuffer.cpp">
+      <Filter>D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tools">
@@ -15,6 +24,12 @@
     </Filter>
     <Filter Include="D3D11">
       <UniqueIdentifier>{0ae2bf5e-c245-46e0-8140-7a371d1f7fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Particles">
+      <UniqueIdentifier>{7267642e-c5ef-499a-b7e0-0222dfc9567e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{e1dd57b0-13ae-4e76-b397-301f21acb6bf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,5 +51,23 @@
     <ClInclude Include="FrameBuffer.hpp">
       <Filter>D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="StorageBuffer.hpp">
+      <Filter>D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.hpp">
+      <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.hpp">
+      <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="resources\shaders\Particles_Render_GS.hlsl" />
+    <FxCompile Include="resources\shaders\Particles_Render_PS.hlsl" />
+    <FxCompile Include="resources\shaders\Particles_Render_VS.hlsl" />
+    <FxCompile Include="resources\shaders\Particles_Update_CS.hlsl" />
   </ItemGroup>
 </Project>

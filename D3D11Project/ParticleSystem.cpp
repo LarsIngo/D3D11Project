@@ -1,0 +1,71 @@
+#include "ParticleSystem.hpp"
+#include "D3D11Renderer.hpp"
+#include "Scene.hpp"
+#include "FrameBuffer.hpp"
+#include "DxHelp.hpp"
+
+ParticleSystem::ParticleSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
+{
+    mpDevice = pDevice;
+    mpDeviceContext = pDeviceContext;
+
+    // Create render pipeline.
+    {
+        DxHelp::CreateVS(mpDevice, "resources/shaders/Particles_Render_VS.hlsl", "main", &mVertexShader);
+        DxHelp::CreateGS(mpDevice, "resources/shaders/Particles_Render_GS.hlsl", "main", &mGeometryShader);
+        DxHelp::CreatePS(mpDevice, "resources/shaders/Particles_Render_PS.hlsl", "main", &mPixelShader);
+
+        {   // Create blend state.
+            D3D11_BLEND_DESC blendDesc;
+            ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+            blendDesc.AlphaToCoverageEnable = false;
+            blendDesc.IndependentBlendEnable = true;
+
+            blendDesc.RenderTarget[0].BlendEnable = true;
+            blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+            blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+            blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+            blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+            blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+            blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+            blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+            DxAssert(mpDevice->CreateBlendState(&blendDesc, &mBlendState), S_OK);
+        }
+    }
+
+    // Create update pipeline.
+    DxHelp::CreateCS(mpDevice, "resources/shaders/Particles_Update_CS.hlsl", "main", &mComputeShader);
+}
+
+ParticleSystem::~ParticleSystem()
+{
+    mComputeShader->Release();
+
+    mVertexShader->Release();
+    mGeometryShader->Release();
+    mPixelShader->Release();
+    mBlendState->Release();
+}
+
+void ParticleSystem::Update(Scene* scene)
+{
+    mpDeviceContext->CSSetShader(mComputeShader, NULL, NULL);
+    mpDeviceContext->Dispatch(1,1,1);
+    mpDeviceContext->CSSetShader(NULL, NULL, NULL);
+}
+
+void ParticleSystem::Render(Scene* scene, FrameBuffer* frameBuffer)
+{
+    mpDeviceContext->VSSetShader(mVertexShader, NULL, NULL);
+    mpDeviceContext->GSSetShader(mGeometryShader, NULL, NULL);
+    mpDeviceContext->PSSetShader(mPixelShader, NULL, NULL);
+    mpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+    mpDeviceContext->OMSetRenderTargets(1, &frameBuffer->mColRTV, NULL);
+
+    mpDeviceContext->Draw(scene->mParticleCount, 0);
+
+    mpDeviceContext->VSSetShader(NULL, NULL, NULL);
+    mpDeviceContext->GSSetShader(NULL, NULL, NULL);
+    mpDeviceContext->PSSetShader(NULL, NULL, NULL);
+}
