@@ -1,13 +1,14 @@
 #include "Scene.hpp"
 #include "StorageSwapBuffer.hpp"
 
-Scene::Scene(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
+Scene::Scene(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, unsigned int maxParticleCount)
 {
     mpDevice = pDevice;
     mpDeviceContext = pDeviceContext;
     mParticleCount = 0;
+    mMaxParticleCount = maxParticleCount;
 
-    mParticleBuffer = new StorageSwapBuffer(mpDevice, mpDeviceContext, sizeof(Particle) * MAX_PARTICLE_COUNT, sizeof(Particle));
+    mParticleBuffer = new StorageSwapBuffer(mpDevice, mpDeviceContext, sizeof(Particle) * mMaxParticleCount, sizeof(Particle));
 }
 
 Scene::~Scene()

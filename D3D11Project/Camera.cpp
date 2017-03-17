@@ -4,13 +4,14 @@
 #include <glm/gtx/quaternion.hpp>
 #include "FrameBuffer.hpp"
 #include "InputManager.hpp"
-#include <iostream>
 
 Camera::Camera(float fov, FrameBuffer* frameBuffer)
 {
     mFov = fov;
-    mProjectionMatrix = glm::perspectiveFovLH(glm::radians(mFov), (float)frameBuffer->mWidth, (float)frameBuffer->mHeight, 0.01f, 200.f);
+    mNearZ = 0.01f;
+    mFarZ = 200000.f;
     mpFrameBuffer = frameBuffer;
+    mProjectionMatrix = glm::perspectiveFovLH(glm::radians(mFov), (float)mpFrameBuffer->mWidth, (float)mpFrameBuffer->mHeight, mNearZ, mFarZ);
 }
 
 Camera::~Camera() 
@@ -53,12 +54,12 @@ void Camera::Update(float moveSpeed, float rotationSpeed, float dt, InputManager
 
     if (inputManager->KeyPressed(GLFW_KEY_X))
     {
-        rotation -= glm::vec3(0.f, 0.f, 1.f);
+        rotation.z -= 360.f;
     }
 
     if (inputManager->KeyPressed(GLFW_KEY_Z))
     {
-        rotation += glm::vec3(0.f, 0.f, 1.f);
+        rotation.z += 360.f;
     }
 
     // Update postion & rotation.
@@ -75,7 +76,6 @@ void Camera::Update(float moveSpeed, float rotationSpeed, float dt, InputManager
         {
             int dx = lastX - x;
             int dy = lastY - y;
-            std::cout << (float)dx / mpFrameBuffer->mWidth * 2.f * mFov << std::endl;
             rotation.x += (float)dx / mpFrameBuffer->mWidth * 2.f * mFov;
             rotation.y += (float)dy / mpFrameBuffer->mHeight * 2.f * mFov * mpFrameBuffer->mHeight / mpFrameBuffer->mWidth;
         }

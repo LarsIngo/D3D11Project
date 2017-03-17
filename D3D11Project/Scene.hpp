@@ -1,7 +1,5 @@
 #pragma once
 
-#define MAX_PARTICLE_COUNT 1048576U
-
 #include <vector>
 #include "Particle.hpp"
 #include <d3d11.h>
@@ -17,7 +15,8 @@ class Scene
         // Constructor.
         // pDevice Pointer to D3D11 device.
         // pDeviceContext Pointer to D3D11 device context.
-        Scene(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+        // maxParticleCount Max number of particles in scene.
+        Scene(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, unsigned int maxParticleCount);
 
         // Destructor.
         ~Scene();
@@ -27,6 +26,7 @@ class Scene
         void AddParticles(std::vector<Particle>& particleList);
 
     private:
+        unsigned int mMaxParticleCount;
         unsigned int mParticleCount;
         StorageSwapBuffer* mParticleBuffer;
 

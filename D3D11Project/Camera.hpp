@@ -63,6 +63,12 @@ class Camera
         // Field of view in degrees.
         float mFov;
 
+        // Near clip plane.
+        float mNearZ;
+
+        // Far clip plane.
+        float mFarZ;
+
     private:
         glm::mat4 CalculateOrientationMatrix() const;
         glm::mat4 CalculateViewMatrix() const;
