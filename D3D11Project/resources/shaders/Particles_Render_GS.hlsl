@@ -11,6 +11,7 @@ struct GSInput
 struct GSOutput
 {
     float4 position : SV_POSITION;
+    float3 worldPosition : WORLDPOSITION;
     float3 color : COLOR;
     float2 uv : UV;
 };
@@ -36,16 +37,23 @@ void main(point GSInput input[1], inout TriangleStream<GSOutput> TriStream)
     float3 lensPosition = metaData.lensPosition;
     float3 lensUpDirection = metaData.lensUpDirection;
 
-    float3 inPosition = input[0].position.xyz;
-    float4 inColor = input[0].color;
+    float3 worldPosition = input[0].position.xyz;
+    float3 color = input[0].color.xyz;
+    float2 scale = input[0].scale.xy;
+
+    float3 particleFrontDirection = normalize(lensPosition - worldPosition);
+    float3 paticleSideDirection = cross(particleFrontDirection, lensUpDirection);
+    float3 paticleUpDirection = cross(paticleSideDirection, particleFrontDirection);
 
     for (uint i = 0; i < 4; ++i)
     {
         float x = i == 1 || i == 3;
         float y = i == 0 || i == 1;
-
-        output.position = float4(inPosition.x + x, inPosition.y + y, 0.f, 1.f);
-        output.color = inColor;
+        output.position.xyz = worldPosition + paticleSideDirection * (x * 2.f - 1.f) * scale.x + paticleUpDirection * (y * 2.f - 1.f) * scale.y;
+        output.position.w = 1.f;
+        output.worldPosition = output.position.xyz;
+        output.position = mul(output.position, vpMatrix);
+        output.color = color;
         output.uv = float2(x, 1.f - y);
 
         TriStream.Append(output);

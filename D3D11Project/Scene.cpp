@@ -5,8 +5,9 @@ Scene::Scene(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 {
     mpDevice = pDevice;
     mpDeviceContext = pDeviceContext;
+    mParticleCount = 0;
 
-    mParticleBuffer = new StorageSwapBuffer(mpDevice, mpDeviceContext, sizeof(Particle) * mMaxParticleCount, sizeof(Particle));
+    mParticleBuffer = new StorageSwapBuffer(mpDevice, mpDeviceContext, sizeof(Particle) * MAX_PARTICLE_COUNT, sizeof(Particle));
 }
 
 Scene::~Scene()

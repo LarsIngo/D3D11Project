@@ -25,9 +25,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Tools">
-      <UniqueIdentifier>{1584de57-6255-4e92-83c6-0b780f7a72c7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="D3D11">
       <UniqueIdentifier>{0ae2bf5e-c245-46e0-8140-7a371d1f7fff}</UniqueIdentifier>
     </Filter>
@@ -36,6 +33,9 @@
     </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{e1dd57b0-13ae-4e76-b397-301f21acb6bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{1584de57-6255-4e92-83c6-0b780f7a72c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

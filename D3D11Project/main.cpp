@@ -23,25 +23,35 @@ int main()
 
     FrameBuffer frameBuffer(device, deviceContext, width, height);
     Camera camera(60.f, &frameBuffer);
+    camera.mPosition.z = -5.f;
 
     Scene scene(device, deviceContext);
     {
-        Particle particle;
-        particle.position = glm::vec4(-0.5f, -0.5f, 0.f, 0.f);
-        particle.color = glm::vec4(0.f, 0.7f, 0.f, 1.f);
         std::vector<Particle> particleList;
-        particleList.push_back(particle);
+        Particle particle;
+        float spaceing = 1.f;
+        particle.scale = glm::vec4(spaceing, spaceing, 0.f, 0.f);
+        for (int y = 0; y < 1024; ++y)
+        {
+            for (int x = 0; x < 1024; ++x)
+            {
+                particle.position = glm::vec4(x * spaceing, y * spaceing, 0.f, 0.f);
+                particle.color = glm::vec4(0.f, 0.7f, 0.f, 1.f);
+                particleList.push_back(particle);
+            }
+        }
         scene.AddParticles(particleList);
     }
     // --- INIT --- //
 
     // +++ MAIN LOOP +++ //
-    float dt = 0.f;
+    float dt = 1.f;
     while (renderer.Running())
     {
-        std::cout << "CPU TIMER: " << dt << std::endl;
+        std::cout << "CPU TIMER: " << 1000.f * dt << " ms | FPS: " << 1.f / dt << std::endl;
         CPUTIMER(dt);
         // +++ UPDATE +++ //
+        camera.Update(20.f, 2000.f, dt);
         particleSystem.Update(&scene, dt);
         // --- UPDATE --- //
 
