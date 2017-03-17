@@ -30,13 +30,15 @@ int main()
         std::vector<Particle> particleList;
         Particle particle;
         float spaceing = 1.f;
-        particle.scale = glm::vec4(spaceing, spaceing, 0.f, 0.f);
+        float speed = 0.1f;
+        particle.scale = glm::vec4(spaceing / 2.f, spaceing / 2.f, 0.f, 0.f);
         for (int y = 0; y < 1024; ++y)
         {
             for (int x = 0; x < 1024; ++x)
             {
                 particle.position = glm::vec4(x * spaceing, y * spaceing, 0.f, 0.f);
-                particle.color = glm::vec4(0.f, 0.7f, 0.f, 1.f);
+                particle.velocity = -glm::normalize(particle.position + glm::vec4(speed, speed, 0.f, 0.f));
+                particle.color = glm::vec4(y / 1024.f, 0.7f, 1.f - x / 1024.f, 1.f);
                 particleList.push_back(particle);
             }
         }
@@ -48,6 +50,7 @@ int main()
     float dt = 1.f;
     while (renderer.Running())
     {
+        glm::clamp(dt, 1.f / 6000.f, 1.f / 60.f);
         std::cout << "CPU TIMER: " << 1000.f * dt << " ms | FPS: " << 1.f / dt << std::endl;
         CPUTIMER(dt);
         // +++ UPDATE +++ //

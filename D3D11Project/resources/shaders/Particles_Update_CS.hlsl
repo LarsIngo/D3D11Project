@@ -32,6 +32,8 @@ void main(uint3 threadID : SV_DispatchThreadID)
 
     if (tID < particleCount)
     {
-        g_OutputParticles[tID] = g_InputParticles[tID];
+        Particle particle = g_InputParticles[tID];
+        particle.position.xyz = particle.position.xyz + particle.velocity * dt;
+        g_OutputParticles[tID] = particle;
     }
 }
