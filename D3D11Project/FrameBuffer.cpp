@@ -13,27 +13,8 @@ FrameBuffer::FrameBuffer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceCont
     mColRTV = nullptr;
     mColUAV = nullptr;
 
-    mWorldTex = nullptr;
-    mWorldSRV = nullptr;
-    mWorldRTV = nullptr;
-    mWorldUAV = nullptr;
-
-    mNormTex = nullptr;
-    mNormSRV = nullptr;
-    mNormRTV = nullptr;
-    mNormUAV = nullptr;
-
-    mDepthTex = nullptr;
-    mDepthSRV = nullptr;
-    mDepthRTV = nullptr;
-    mDepthUAV = nullptr;
-
-    mDepthStencilTex = nullptr;
-    mDepthStencilDSV = nullptr;
-
-    mWorldStagingTex = nullptr;
-    mNormStagingTex = nullptr;
-    mDepthStagingTex = nullptr;
+    //mDepthStencilTex = nullptr;
+    //mDepthStencilDSV = nullptr;
 
     D3D11_TEXTURE2D_DESC texDesc;
     ZeroMemory(&texDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -62,52 +43,17 @@ FrameBuffer::FrameBuffer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceCont
     mColTex->GetDesc(&desc);
     mMipLevels = desc.MipLevels;
 
-
-    // World.
-    texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    DxAssert(mpDevice->CreateTexture2D(&texDesc, NULL, &mWorldTex), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE) DxAssert(mpDevice->CreateShaderResourceView(mWorldTex, NULL, &mWorldSRV), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_RENDER_TARGET) DxAssert(mpDevice->CreateRenderTargetView(mWorldTex, NULL, &mWorldRTV), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_UNORDERED_ACCESS) DxAssert(mpDevice->CreateUnorderedAccessView(mWorldTex, NULL, &mWorldUAV), S_OK);
-
-
-    // Normal.
-    DxAssert(mpDevice->CreateTexture2D(&texDesc, NULL, &mNormTex), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE) DxAssert(mpDevice->CreateShaderResourceView(mNormTex, NULL, &mNormSRV), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_RENDER_TARGET) DxAssert(mpDevice->CreateRenderTargetView(mNormTex, NULL, &mNormRTV), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_UNORDERED_ACCESS) DxAssert(mpDevice->CreateUnorderedAccessView(mNormTex, NULL, &mNormUAV), S_OK);
-
-
-    // Depth.
-    texDesc.Format = DXGI_FORMAT_R32_FLOAT;
-    DxAssert(mpDevice->CreateTexture2D(&texDesc, NULL, &mDepthTex), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE) DxAssert(mpDevice->CreateShaderResourceView(mDepthTex, NULL, &mDepthSRV), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_RENDER_TARGET) DxAssert(mpDevice->CreateRenderTargetView(mDepthTex, NULL, &mDepthRTV), S_OK);
-    if (texDesc.BindFlags & D3D11_BIND_UNORDERED_ACCESS) DxAssert(mpDevice->CreateUnorderedAccessView(mDepthTex, NULL, &mDepthUAV), S_OK);
-
-
     // Depth stencil.
-    texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-    texDesc.BindFlags = texDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE ? D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE : D3D11_BIND_DEPTH_STENCIL;
-    DxAssert(mpDevice->CreateTexture2D(&texDesc, NULL, &mDepthStencilTex), S_OK);
-    D3D11_DEPTH_STENCIL_VIEW_DESC depthDesc;
-    ZeroMemory(&depthDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-    depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthDesc.Flags = 0;
-    depthDesc.Texture2D.MipSlice = 0;
-    depthDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    DxAssert(mpDevice->CreateDepthStencilView(mDepthStencilTex, &depthDesc, &mDepthStencilDSV), S_OK);
-
-
-    // Staging buffers.
-    texDesc.Usage = D3D11_USAGE_STAGING;
-    texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-    texDesc.BindFlags = 0;
-    texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    DxAssert(mpDevice->CreateTexture2D(&texDesc, NULL, &mWorldStagingTex), S_OK);
-    DxAssert(mpDevice->CreateTexture2D(&texDesc, NULL, &mNormStagingTex), S_OK);
-    texDesc.Format = DXGI_FORMAT_R32_FLOAT;
-    DxAssert(mpDevice->CreateTexture2D(&texDesc, NULL, &mDepthStagingTex), S_OK);
+    //texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+    //texDesc.BindFlags = texDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE ? D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE : D3D11_BIND_DEPTH_STENCIL;
+    //DxAssert(mpDevice->CreateTexture2D(&texDesc, NULL, &mDepthStencilTex), S_OK);
+    //D3D11_DEPTH_STENCIL_VIEW_DESC depthDesc;
+    //ZeroMemory(&depthDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+    //depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    //depthDesc.Flags = 0;
+    //depthDesc.Texture2D.MipSlice = 0;
+    //depthDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    //DxAssert(mpDevice->CreateDepthStencilView(mDepthStencilTex, &depthDesc, &mDepthStencilDSV), S_OK);
 }
 
 FrameBuffer::~FrameBuffer()
@@ -117,27 +63,8 @@ FrameBuffer::~FrameBuffer()
     if (mColRTV != nullptr) mColRTV->Release();
     if (mColUAV != nullptr) mColUAV->Release();
 
-    if (mWorldTex != nullptr) mWorldTex->Release();
-    if (mWorldSRV != nullptr) mWorldSRV->Release();
-    if (mWorldRTV != nullptr) mWorldRTV->Release();
-    if (mWorldUAV != nullptr) mWorldUAV->Release();
-
-    if (mNormTex != nullptr) mNormTex->Release();
-    if (mNormSRV != nullptr) mNormSRV->Release();
-    if (mNormRTV != nullptr) mNormRTV->Release();
-    if (mNormUAV != nullptr) mNormUAV->Release();
-
-    if (mDepthTex != nullptr) mDepthTex->Release();
-    if (mDepthSRV != nullptr) mDepthSRV->Release();
-    if (mDepthRTV != nullptr) mDepthRTV->Release();
-    if (mDepthUAV != nullptr) mDepthUAV->Release();
-
-    if (mDepthStencilTex != nullptr) mDepthStencilTex->Release();
-    if (mDepthStencilDSV != nullptr) mDepthStencilDSV->Release();
-
-    if (mWorldStagingTex != nullptr) mWorldStagingTex->Release();
-    if (mNormStagingTex != nullptr) mNormStagingTex->Release();
-    if (mDepthStagingTex != nullptr) mDepthStagingTex->Release();
+    //if (mDepthStencilTex != nullptr) mDepthStencilTex->Release();
+    //if (mDepthStencilDSV != nullptr) mDepthStencilDSV->Release();
 }
 
 void FrameBuffer::ClearAll(float r, float g, float b, float a, float depth)
@@ -147,10 +74,7 @@ void FrameBuffer::ClearAll(float r, float g, float b, float a, float depth)
     float clrNorm[4] = { 0.f, 0.f, 0.f, 0.f };
     float clrDepth[4] = { 0.f, 0.f, 0.f, 0.f };
     if (mColRTV != nullptr) mpDeviceContext->ClearRenderTargetView(mColRTV, clrColor);
-    if (mWorldRTV != nullptr) mpDeviceContext->ClearRenderTargetView(mWorldRTV, clrWorld);
-    if (mNormRTV != nullptr) mpDeviceContext->ClearRenderTargetView(mNormRTV, clrNorm);
-    if (mDepthRTV != nullptr) mpDeviceContext->ClearRenderTargetView(mDepthRTV, clrDepth);
-    if (mDepthStencilDSV != nullptr) mpDeviceContext->ClearDepthStencilView(mDepthStencilDSV, D3D11_CLEAR_DEPTH, depth, 0);
+    //if (mDepthStencilDSV != nullptr) mpDeviceContext->ClearDepthStencilView(mDepthStencilDSV, D3D11_CLEAR_DEPTH, depth, 0);
 }
 
 void FrameBuffer::Copy(FrameBuffer* fb)
@@ -160,48 +84,6 @@ void FrameBuffer::Copy(FrameBuffer* fb)
     assert(mMipLevels == fb->mMipLevels);
 
     DxHelp::CopyTexture(mpDeviceContext, mColTex, fb->mColTex, mWidth, mHeight, mMipLevels);
-    DxHelp::CopyTexture(mpDeviceContext, mWorldTex, fb->mWorldTex, mWidth, mHeight, mMipLevels);
-    DxHelp::CopyTexture(mpDeviceContext, mNormTex, fb->mNormTex, mWidth, mHeight, mMipLevels);
-    DxHelp::CopyTexture(mpDeviceContext, mDepthTex, fb->mDepthTex, mWidth, mHeight, mMipLevels);
 
-    mpDeviceContext->CopyResource(mDepthStencilTex, fb->mDepthStencilTex);
-}
-
-glm::vec4* FrameBuffer::ReadWorld()
-{
-    DxHelp::CopyTexture(mpDeviceContext, mWorldStagingTex, mWorldTex, mWidth, mHeight, mMipLevels);
-
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-    DxAssert(mpDeviceContext->Map(mWorldStagingTex, 0, D3D11_MAP_READ, 0, &mappedResource), S_OK);
-    mpDeviceContext->Unmap(mWorldStagingTex, 0);
-
-    return (glm::vec4*)mappedResource.pData;
-}
-
-glm::vec4* FrameBuffer::ReadNormal()
-{
-    DxHelp::CopyTexture(mpDeviceContext, mNormStagingTex, mNormTex, mWidth, mHeight, mMipLevels);
-
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-    DxAssert(mpDeviceContext->Map(mNormStagingTex, 0, D3D11_MAP_READ, 0, &mappedResource), S_OK);
-    mpDeviceContext->Unmap(mNormStagingTex, 0);
-
-    return (glm::vec4*)mappedResource.pData;
-}
-
-float* FrameBuffer::ReadDepth()
-{
-    DxHelp::CopyTexture(mpDeviceContext, mDepthStagingTex, mDepthTex, mWidth, mHeight, mMipLevels);
-
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-    DxAssert(mpDeviceContext->Map(mDepthStagingTex, 0, D3D11_MAP_READ, 0, &mappedResource), S_OK);
-    mpDeviceContext->Unmap(mDepthStagingTex, 0);
-
-    return (float*)mappedResource.pData;
+    //mpDeviceContext->CopyResource(mDepthStencilTex, fb->mDepthStencilTex);
 }
