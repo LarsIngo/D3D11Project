@@ -67,7 +67,7 @@ int main()
         // --- UPDATE --- //
 
         // +++ RENDER +++ //
-        camera.mpFrameBuffer->ClearAll(0.2f, 0.2f, 0.2f);
+        camera.mpFrameBuffer->Clear(0.2f, 0.2f, 0.2f);
 
         particleSystem.Render(&scene, &camera);
         // --- RENDER --- //

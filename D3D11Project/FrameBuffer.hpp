@@ -20,7 +20,7 @@ class FrameBuffer
         ~FrameBuffer();
 
         // Clear textures.
-        void ClearAll(float r = 0.f, float g = 0.f, float b = 0.f, float a = 0.f, float depth = 1.f);
+        void Clear(float r = 0.f, float g = 0.f, float b = 0.f, float a = 0.f, float depth = 1.f);
 
 		// Copy other frame buffer.
 		void Copy(FrameBuffer* fb);

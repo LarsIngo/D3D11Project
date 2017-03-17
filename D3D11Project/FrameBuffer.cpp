@@ -67,7 +67,7 @@ FrameBuffer::~FrameBuffer()
     //if (mDepthStencilDSV != nullptr) mDepthStencilDSV->Release();
 }
 
-void FrameBuffer::ClearAll(float r, float g, float b, float a, float depth)
+void FrameBuffer::Clear(float r, float g, float b, float a, float depth)
 {
     float clrColor[4] = { r, g, b, a };
     float clrWorld[4] = { 0.f, 0.f, 0.f, 0.f };
