@@ -12,7 +12,7 @@ ParticleSystem::ParticleSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pDevi
     mpDevice = pDevice;
     mpDeviceContext = pDeviceContext;
 
-    // Create meta buffer.
+    // Create meta buffers.
     DxHelp::CreateCPUwriteGPUreadStructuredBuffer<UpdateMetaData>(mpDevice, 1, &mUpdateMetaDataBuffer);
     DxHelp::CreateCPUwriteGPUreadStructuredBuffer<RenderMetaData>(mpDevice, 1, &mRenderMetaDataBuffer);
 
@@ -70,7 +70,7 @@ void ParticleSystem::Update(Scene* scene, float dt)
     }
     mpDeviceContext->CSSetUnorderedAccessViews(0, 1, &scene->mParticleBuffer->GetOutputBuffer()->mUAV, NULL);
 
-    mpDeviceContext->Dispatch(scene->mParticleCount,1,1);
+    mpDeviceContext->Dispatch(scene->mParticleCount / 256 + 1,1,1);
 
     mpDeviceContext->CSSetShader(NULL, NULL, NULL);
     void* p[1] = { NULL };
