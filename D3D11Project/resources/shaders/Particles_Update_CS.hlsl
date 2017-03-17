@@ -12,8 +12,26 @@ StructuredBuffer<Particle> g_InputParticles : register(t0);
 // Output particles.
 RWStructuredBuffer<Particle> g_OutputParticles : register(u0);
 
-[numthreads(1, 1, 1)]
-void main(uint tID : SV_DispatchThreadID)
+// Meta data.
+struct MetaData
 {
-    g_OutputParticles[tID] = g_InputParticles[tID];
+    float dt;
+    uint particleCount;
+    float pad[6];
+};
+// Meta buffer.
+StructuredBuffer<MetaData> g_MetaBuffer : register(t1);
+
+[numthreads(1, 1, 1)]
+void main(uint3 threadID : SV_DispatchThreadID)
+{
+    MetaData metaData = g_MetaBuffer[0];
+    float dt = metaData.dt;
+    uint particleCount = metaData.particleCount;
+    uint tID = threadID.x;
+
+    if (tID < particleCount)
+    {
+        g_OutputParticles[tID] = g_InputParticles[tID];
+    }
 }

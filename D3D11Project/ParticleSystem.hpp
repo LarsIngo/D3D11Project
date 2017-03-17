@@ -1,10 +1,12 @@
 #pragma once
 
 #include <d3d11.h>
+#include <glm/glm.hpp>
 
 class Scene;
 class StorageBuffer;
 class FrameBuffer;
+class Camera;
 
 class ParticleSystem
 {
@@ -19,12 +21,13 @@ class ParticleSystem
 
         // Update particles.
         // scene Scene to update.
-        void Update(Scene* scene);
+        // dt Delta time.
+        void Update(Scene* scene, float dt);
 
         // Render particles.
         // scene Scene to render.
-        // frameBuffer Frame buffer to render.
-        void Render(Scene* scene, FrameBuffer* frameBuffer);
+        // camera Camera to render from.
+        void Render(Scene* scene, Camera* camera);
 
     private:
         ID3D11Device* mpDevice;
@@ -36,4 +39,21 @@ class ParticleSystem
         ID3D11GeometryShader* mGeometryShader;
         ID3D11PixelShader* mPixelShader;
         ID3D11BlendState* mBlendState;
+        
+        struct UpdateMetaData
+        {
+            float dt;
+            unsigned int particleCount;
+            float pad[6];
+        } mUpdateMetaData;
+        ID3D11ShaderResourceView* mUpdateMetaDataBuffer;
+
+        struct RenderMetaData
+        {
+            glm::mat4 vpMatrix;
+            glm::vec3 lensPosition;
+            glm::vec3 lensUpDirection;
+            float pad[6];
+        } mRenderMetaData;
+        ID3D11ShaderResourceView* mRenderMetaDataBuffer;
 };

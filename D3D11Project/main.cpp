@@ -6,6 +6,7 @@
 #include "FrameBuffer.hpp"
 #include "ParticleSystem.hpp"
 #include "Scene.hpp"
+#include "Camera.hpp"
 
 int main()
 {
@@ -17,9 +18,11 @@ int main()
     D3D11Renderer renderer(width, height);
     ID3D11Device* device = renderer.mDevice;
     ID3D11DeviceContext* deviceContext = renderer.mDeviceContext;
-    FrameBuffer frameBuffer(device, deviceContext, width, height);
 
     ParticleSystem particleSystem(device, deviceContext);
+
+    FrameBuffer frameBuffer(device, deviceContext, width, height);
+    Camera camera(60.f, &frameBuffer);
 
     Scene scene(device, deviceContext);
     {
@@ -39,17 +42,17 @@ int main()
         std::cout << "CPU TIMER: " << dt << std::endl;
         CPUTIMER(dt);
         // +++ UPDATE +++ //
-        particleSystem.Update(&scene);
+        particleSystem.Update(&scene, dt);
         // --- UPDATE --- //
 
         // +++ RENDER +++ //
-        frameBuffer.ClearAll(0.2f, 0.2f, 0.2f);
+        camera.mpFrameBuffer->ClearAll(0.2f, 0.2f, 0.2f);
 
-        particleSystem.Render(&scene, &frameBuffer);
+        particleSystem.Render(&scene, &camera);
         // --- RENDER --- //
 
         // +++ PRESENET +++ //
-        renderer.Present(&frameBuffer);
+        renderer.Present(camera.mpFrameBuffer);
         // --- PRESENET --- //
     }
     // --- MAIN LOOP --- //

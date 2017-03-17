@@ -4,11 +4,17 @@
 #include "FrameBuffer.hpp"
 #include "DxHelp.hpp"
 #include "StorageSwapBuffer.hpp"
+#include "Camera.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 ParticleSystem::ParticleSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 {
     mpDevice = pDevice;
     mpDeviceContext = pDeviceContext;
+
+    // Create meta buffer.
+    DxHelp::CreateCPUwriteGPUreadStructuredBuffer<UpdateMetaData>(mpDevice, 1, &mUpdateMetaDataBuffer);
+    DxHelp::CreateCPUwriteGPUreadStructuredBuffer<RenderMetaData>(mpDevice, 1, &mRenderMetaDataBuffer);
 
     // Create render pipeline.
     {
@@ -41,6 +47,9 @@ ParticleSystem::ParticleSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pDevi
 
 ParticleSystem::~ParticleSystem()
 {
+    mUpdateMetaDataBuffer->Release();
+    mRenderMetaDataBuffer->Release();
+
     mComputeShader->Release();
 
     mVertexShader->Release();
@@ -49,10 +58,16 @@ ParticleSystem::~ParticleSystem()
     mBlendState->Release();
 }
 
-void ParticleSystem::Update(Scene* scene)
+void ParticleSystem::Update(Scene* scene, float dt)
 {
     mpDeviceContext->CSSetShader(mComputeShader, NULL, NULL);
     mpDeviceContext->CSSetShaderResources(0, 1, &scene->mParticleBuffer->GetInputBuffer()->mSRV);
+    {
+        mUpdateMetaData.dt = dt;
+        mUpdateMetaData.particleCount = scene->mParticleCount;
+        DxHelp::WriteStructuredBuffer<UpdateMetaData>(mpDeviceContext, &mUpdateMetaData, 1, mUpdateMetaDataBuffer);
+        mpDeviceContext->CSSetShaderResources(1, 1, &mUpdateMetaDataBuffer);
+    }
     mpDeviceContext->CSSetUnorderedAccessViews(0, 1, &scene->mParticleBuffer->GetOutputBuffer()->mUAV, NULL);
 
     mpDeviceContext->Dispatch(scene->mParticleCount,1,1);
@@ -60,26 +75,39 @@ void ParticleSystem::Update(Scene* scene)
     mpDeviceContext->CSSetShader(NULL, NULL, NULL);
     void* p[1] = { NULL };
     mpDeviceContext->CSSetShaderResources(0, 1, (ID3D11ShaderResourceView**)p);
+    mpDeviceContext->CSSetShaderResources(1, 1, (ID3D11ShaderResourceView**)p);
     mpDeviceContext->CSSetUnorderedAccessViews(0, 1, (ID3D11UnorderedAccessView**)p, NULL);
 }
 
-void ParticleSystem::Render(Scene* scene, FrameBuffer* frameBuffer)
+void ParticleSystem::Render(Scene* scene, Camera* camera)
 {
     mpDeviceContext->VSSetShader(mVertexShader, NULL, NULL);
     mpDeviceContext->GSSetShader(mGeometryShader, NULL, NULL);
     mpDeviceContext->PSSetShader(mPixelShader, NULL, NULL);
     mpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-    mpDeviceContext->OMSetRenderTargets(1, &frameBuffer->mColRTV, NULL);
+    float blendFactor[] = { 0.f, 0.f, 0.f, 0.f };
+    UINT sampleMask = 0xffffffff;
+    mpDeviceContext->OMSetBlendState(mBlendState, blendFactor, sampleMask);
+    mpDeviceContext->OMSetRenderTargets(1, &camera->mpFrameBuffer->mColRTV, NULL);
     mpDeviceContext->VSSetShaderResources(0, 1, &scene->mParticleBuffer->GetOutputBuffer()->mSRV);
+    {
+        mRenderMetaData.vpMatrix = glm::transpose(camera->mProjectionMatrix * camera->mViewMatrix);
+        mRenderMetaData.lensPosition = camera->mPosition;
+        mRenderMetaData.lensUpDirection = camera->mUpDirection;
+        DxHelp::WriteStructuredBuffer<RenderMetaData>(mpDeviceContext, &mRenderMetaData, 1, mRenderMetaDataBuffer);
+        mpDeviceContext->GSSetShaderResources(0, 1, &mRenderMetaDataBuffer);
+    }
 
     mpDeviceContext->Draw(scene->mParticleCount, 0);
 
     mpDeviceContext->VSSetShader(NULL, NULL, NULL);
     mpDeviceContext->GSSetShader(NULL, NULL, NULL);
     mpDeviceContext->PSSetShader(NULL, NULL, NULL);
+    mpDeviceContext->OMSetBlendState(NULL, blendFactor, sampleMask);
     void* p[1] = { NULL };
     mpDeviceContext->OMSetRenderTargets(1, (ID3D11RenderTargetView**)p, NULL);
     mpDeviceContext->VSSetShaderResources(0, 1, (ID3D11ShaderResourceView**)p);
+    mpDeviceContext->GSSetShaderResources(0, 1, (ID3D11ShaderResourceView**)p);
 
     scene->mParticleBuffer->Swap();
 }

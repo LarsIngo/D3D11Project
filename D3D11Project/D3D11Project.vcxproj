@@ -153,6 +153,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="D3D11Renderer.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="StorageSwapBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="D3D11Renderer.hpp" />
     <ClInclude Include="CPUTimer.hpp" />
     <ClInclude Include="DxAssert.hpp" />
