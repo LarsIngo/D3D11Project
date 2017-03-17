@@ -25,4 +25,4 @@ class CPUTimer {
 
 };
 
-#define CPUTIMER(dt) CPUTimer instance(dt)
+#define CPUTIMER(dt) CPUTimer cpuTimer(dt)

@@ -3,6 +3,7 @@
 
 #include "D3D11Renderer.hpp"
 #include "CPUTimer.hpp"
+#include "D3D11Timer.hpp"
 #include "FrameBuffer.hpp"
 #include "ParticleSystem.hpp"
 #include "Scene.hpp"
@@ -48,11 +49,13 @@ int main()
 
     // +++ MAIN LOOP +++ //
     float dt = 1.f;
+    float GPUdt = 1.f;
     while (renderer.Running())
     {
         glm::clamp(dt, 1.f / 6000.f, 1.f / 60.f);
-        std::cout << "CPU TIMER: " << 1000.f * dt << " ms | FPS: " << 1.f / dt << std::endl;
+        std::cout << "CPU TIMER: " << 1000.f * dt << " ms | FPS: " << 1.f / dt << " | GPU: " <<  1000.f * GPUdt << " ms" << std::endl;
         CPUTIMER(dt);
+        D3D11TIMER(GPUdt, device, deviceContext);
         // +++ UPDATE +++ //
         camera.Update(20.f, 2000.f, dt);
         particleSystem.Update(&scene, dt);
