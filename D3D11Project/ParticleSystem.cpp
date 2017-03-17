@@ -3,6 +3,7 @@
 #include "Scene.hpp"
 #include "FrameBuffer.hpp"
 #include "DxHelp.hpp"
+#include "StorageSwapBuffer.hpp"
 
 ParticleSystem::ParticleSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 {
@@ -51,8 +52,15 @@ ParticleSystem::~ParticleSystem()
 void ParticleSystem::Update(Scene* scene)
 {
     mpDeviceContext->CSSetShader(mComputeShader, NULL, NULL);
-    mpDeviceContext->Dispatch(1,1,1);
+    mpDeviceContext->CSSetShaderResources(0, 1, &scene->mParticleBuffer->GetInputBuffer()->mSRV);
+    mpDeviceContext->CSSetUnorderedAccessViews(0, 1, &scene->mParticleBuffer->GetOutputBuffer()->mUAV, NULL);
+
+    mpDeviceContext->Dispatch(scene->mParticleCount,1,1);
+
     mpDeviceContext->CSSetShader(NULL, NULL, NULL);
+    void* p[1] = { NULL };
+    mpDeviceContext->CSSetShaderResources(0, 1, (ID3D11ShaderResourceView**)p);
+    mpDeviceContext->CSSetUnorderedAccessViews(0, 1, (ID3D11UnorderedAccessView**)p, NULL);
 }
 
 void ParticleSystem::Render(Scene* scene, FrameBuffer* frameBuffer)
@@ -62,10 +70,16 @@ void ParticleSystem::Render(Scene* scene, FrameBuffer* frameBuffer)
     mpDeviceContext->PSSetShader(mPixelShader, NULL, NULL);
     mpDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
     mpDeviceContext->OMSetRenderTargets(1, &frameBuffer->mColRTV, NULL);
+    mpDeviceContext->VSSetShaderResources(0, 1, &scene->mParticleBuffer->GetOutputBuffer()->mSRV);
 
     mpDeviceContext->Draw(scene->mParticleCount, 0);
 
     mpDeviceContext->VSSetShader(NULL, NULL, NULL);
     mpDeviceContext->GSSetShader(NULL, NULL, NULL);
     mpDeviceContext->PSSetShader(NULL, NULL, NULL);
+    void* p[1] = { NULL };
+    mpDeviceContext->OMSetRenderTargets(1, (ID3D11RenderTargetView**)p, NULL);
+    mpDeviceContext->VSSetShaderResources(0, 1, (ID3D11ShaderResourceView**)p);
+
+    scene->mParticleBuffer->Swap();
 }

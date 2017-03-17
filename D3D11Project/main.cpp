@@ -24,6 +24,8 @@ int main()
     Scene scene(device, deviceContext);
     {
         Particle particle;
+        particle.position = glm::vec4(-0.5f, -0.5f, 0.f, 0.f);
+        particle.color = glm::vec4(0.f, 0.7f, 0.f, 1.f);
         std::vector<Particle> particleList;
         particleList.push_back(particle);
         scene.AddParticles(particleList);

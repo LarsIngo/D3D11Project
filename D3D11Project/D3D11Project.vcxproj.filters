@@ -17,6 +17,9 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="StorageSwapBuffer.cpp">
+      <Filter>D3D11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tools">
@@ -63,11 +66,14 @@
     <ClInclude Include="Scene.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="StorageSwapBuffer.hpp">
+      <Filter>D3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="resources\shaders\Particles_Render_GS.hlsl" />
-    <FxCompile Include="resources\shaders\Particles_Render_PS.hlsl" />
-    <FxCompile Include="resources\shaders\Particles_Render_VS.hlsl" />
-    <FxCompile Include="resources\shaders\Particles_Update_CS.hlsl" />
+    <None Include="resources\shaders\Particles_Render_GS.hlsl" />
+    <None Include="resources\shaders\Particles_Render_PS.hlsl" />
+    <None Include="resources\shaders\Particles_Render_VS.hlsl" />
+    <None Include="resources\shaders\Particles_Update_CS.hlsl" />
   </ItemGroup>
 </Project>

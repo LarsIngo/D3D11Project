@@ -4,7 +4,7 @@
 #include "Particle.hpp"
 #include <d3d11.h>
 
-class StorageBuffer;
+class StorageSwapBuffer;
 class ParticleSystem;
 
 class Scene
@@ -27,7 +27,7 @@ class Scene
     private:
         const unsigned int mMaxParticleCount = 1024;
         unsigned int mParticleCount = 0;
-        StorageBuffer* mStorageBuffer;
+        StorageSwapBuffer* mParticleBuffer;
 
         ID3D11Device* mpDevice;
         ID3D11DeviceContext* mpDeviceContext;

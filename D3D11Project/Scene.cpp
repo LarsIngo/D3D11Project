@@ -1,17 +1,17 @@
 #include "Scene.hpp"
-#include "StorageBuffer.hpp"
+#include "StorageSwapBuffer.hpp"
 
 Scene::Scene(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 {
     mpDevice = pDevice;
     mpDeviceContext = pDeviceContext;
 
-    mStorageBuffer = new StorageBuffer(mpDevice, mpDeviceContext, sizeof(Particle) * mMaxParticleCount, sizeof(Particle));
+    mParticleBuffer = new StorageSwapBuffer(mpDevice, mpDeviceContext, sizeof(Particle) * mMaxParticleCount, sizeof(Particle));
 }
 
 Scene::~Scene()
 {
-    delete mStorageBuffer;
+    delete mParticleBuffer;
 }
 
 void Scene::AddParticles(std::vector<Particle>& particleList)
@@ -20,7 +20,7 @@ void Scene::AddParticles(std::vector<Particle>& particleList)
     unsigned int particleCount = (unsigned int)particleList.size();
     unsigned int bytes = particleCount * sizeof(Particle);
 
-    mStorageBuffer->Write(particleList.data(), bytes, offset);
+    mParticleBuffer->GetInputBuffer()->Write(particleList.data(), bytes, offset);
 
     mParticleCount += particleCount;
 }

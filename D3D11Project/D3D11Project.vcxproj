@@ -159,6 +159,7 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StorageBuffer.cpp" />
+    <ClCompile Include="StorageSwapBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Renderer.hpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="StorageBuffer.hpp" />
+    <ClInclude Include="StorageSwapBuffer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Particles_Render_GS.hlsl">
