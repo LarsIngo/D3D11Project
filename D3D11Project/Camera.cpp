@@ -2,12 +2,14 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <Windows.h>
 #include "FrameBuffer.hpp"
+#include "InputManager.hpp"
+#include <iostream>
 
 Camera::Camera(float fov, FrameBuffer* frameBuffer)
 {
-    mProjectionMatrix = glm::perspectiveFovLH(glm::radians(fov), (float)frameBuffer->mWidth, (float)frameBuffer->mHeight, 0.01f, 200.f);
+    mFov = fov;
+    mProjectionMatrix = glm::perspectiveFovLH(glm::radians(mFov), (float)frameBuffer->mWidth, (float)frameBuffer->mHeight, 0.01f, 200.f);
     mpFrameBuffer = frameBuffer;
 }
 
@@ -16,55 +18,45 @@ Camera::~Camera()
 
 }
 
-void Camera::Update(float moveSpeed, float rotationSpeed, float dt)
+void Camera::Update(float moveSpeed, float rotationSpeed, float dt, InputManager* inputManager)
 {
     // Get movement & rotation.
     glm::vec3 movement = glm::vec3(0.f, 0.f, 0.f);
     glm::vec3 rotation = glm::vec3(0.f, 0.f, 0.f);
 
-    if (GetAsyncKeyState('W'))
+    if (inputManager->KeyPressed(GLFW_KEY_W))
     {
         movement += mFrontDirection;
     }
-    if (GetAsyncKeyState('A'))
+    if (inputManager->KeyPressed(GLFW_KEY_A))
     {
         movement -= mRightDirection;
     }
-    if (GetAsyncKeyState('S'))
+    if (inputManager->KeyPressed(GLFW_KEY_S))
     {
         movement -= mFrontDirection;
     }
-    if (GetAsyncKeyState('D'))
+    if (inputManager->KeyPressed(GLFW_KEY_D))
     {
         movement += mRightDirection;
     }
 
-    if (GetAsyncKeyState('Q'))
+    if (inputManager->KeyPressed(GLFW_KEY_Q))
     {
         movement += mUpDirection;
     }
 
-    if (GetAsyncKeyState('E'))
+    if (inputManager->KeyPressed(GLFW_KEY_E))
     {
         movement -= mUpDirection;
     }
 
-    if (GetAsyncKeyState('Q'))
-    {
-        movement += mUpDirection;
-    }
-
-    if (GetAsyncKeyState('E'))
-    {
-        movement -= mUpDirection;
-    }
-
-    if (GetAsyncKeyState('X')) 
+    if (inputManager->KeyPressed(GLFW_KEY_X))
     {
         rotation -= glm::vec3(0.f, 0.f, 1.f);
     }
 
-    if (GetAsyncKeyState('Z')) 
+    if (inputManager->KeyPressed(GLFW_KEY_Z))
     {
         rotation += glm::vec3(0.f, 0.f, 1.f);
     }
@@ -72,6 +64,22 @@ void Camera::Update(float moveSpeed, float rotationSpeed, float dt)
     // Update postion & rotation.
     mPosition += movement * moveSpeed * dt;
     rotation *= rotationSpeed * dt;
+
+    // Update mouse rotation.
+    if (inputManager->GetMouseInsideWindow())
+    {
+        int x, y, lastX, lastY;
+        inputManager->GetMousePositionLast(lastX, lastY);
+        inputManager->GetMousePositionCurrent(x, y);
+        if (inputManager->GetMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            int dx = lastX - x;
+            int dy = lastY - y;
+            std::cout << (float)dx / mpFrameBuffer->mWidth * 2.f * mFov << std::endl;
+            rotation.x += (float)dx / mpFrameBuffer->mWidth * 2.f * mFov;
+            rotation.y += (float)dy / mpFrameBuffer->mHeight * 2.f * mFov * mpFrameBuffer->mHeight / mpFrameBuffer->mWidth;
+        }
+    }
 
     // Update direction vectors and matrices.
     Roll(rotation.z);

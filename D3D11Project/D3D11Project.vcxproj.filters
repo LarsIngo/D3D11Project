@@ -23,6 +23,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>InputManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="D3D11">
@@ -36,6 +39,9 @@
     </Filter>
     <Filter Include="Tools">
       <UniqueIdentifier>{1584de57-6255-4e92-83c6-0b780f7a72c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputManager">
+      <UniqueIdentifier>{e3ee95d4-4ca7-4a81-8514-013bd4979166}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +80,9 @@
     </ClInclude>
     <ClInclude Include="Camera.hpp">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.hpp">
+      <Filter>InputManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

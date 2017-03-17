@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 class FrameBuffer;
+class InputManager;
 
 // A camera.
 class Camera 
@@ -20,7 +21,8 @@ class Camera
         // moveSpeed Speed of movement.
         // rotationSpeed Speed of rotation-
         // dt Delta time.
-        void Update(float moveSpeed, float rotationSpeed, float dt);
+        // inputManager Input manager to handle inputs. 
+        void Update(float moveSpeed, float rotationSpeed, float dt, InputManager* inputManager);
 
         // Rotate camera around up direction.
         // rotation Amount of rotation in degrees.
@@ -57,6 +59,9 @@ class Camera
 
         // Frame buffer pointer.
         FrameBuffer* mpFrameBuffer;
+
+        // Field of view in degrees.
+        float mFov;
 
     private:
         glm::mat4 CalculateOrientationMatrix() const;

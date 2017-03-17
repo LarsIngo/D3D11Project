@@ -31,7 +31,7 @@ bool D3D11Renderer::Running() const
 
     glfwPollEvents();
 
-    return !glfwWindowShouldClose(mWindow);
+    return !glfwWindowShouldClose(mGLFWwindow);
 }
 
 void D3D11Renderer::Close()
@@ -62,7 +62,7 @@ void D3D11Renderer::InitialiseGLFW()
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
     /* Create window */
-    mWindow = glfwCreateWindow(mWinWidth, mWinHeight, "D3D11 window", NULL, NULL);
+    mGLFWwindow = glfwCreateWindow(mWinWidth, mWinHeight, "D3D11 window", NULL, NULL);
 }
 
 void D3D11Renderer::DeInitialiseGLFW()
@@ -72,7 +72,7 @@ void D3D11Renderer::DeInitialiseGLFW()
 
 void D3D11Renderer::InitialiseD3D11()
 {
-    assert(mWindow != NULL);
+    assert(mGLFWwindow != NULL);
 
     // We initiate the device, device context and swap chain.
     DXGI_SWAP_CHAIN_DESC scDesc;
@@ -87,7 +87,7 @@ void D3D11Renderer::InitialiseD3D11()
     scDesc.SampleDesc.Quality = 0;												// Disable multisampling.
     scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;   // The back buffer will be rendered to.
     scDesc.BufferCount = 1;							        // We only have one back buffer.
-    scDesc.OutputWindow = glfwGetWin32Window(mWindow);	    // Must point to the handle for the window used for rendering.
+    scDesc.OutputWindow = glfwGetWin32Window(mGLFWwindow);	    // Must point to the handle for the window used for rendering.
     scDesc.Windowed = true;					                // Run in windowed mode.
     scDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;	        // This makes the display driver select the most efficient technique.
     scDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;  // Alt-enter fullscreen.

@@ -31,6 +31,8 @@ class D3D11Renderer
         // D3D11 device context.
         ID3D11DeviceContext* mDeviceContext;
 
+        // GLFW window.
+        GLFWwindow* mGLFWwindow;
     private:
         void InitialiseGLFW();
         void DeInitialiseGLFW();
@@ -41,7 +43,6 @@ class D3D11Renderer
         unsigned int mWinWidth;
         unsigned int mWinHeight;
         bool mClose;
-        GLFWwindow* mWindow;
 
         //D3D11
         IDXGISwapChain* mSwapChain;

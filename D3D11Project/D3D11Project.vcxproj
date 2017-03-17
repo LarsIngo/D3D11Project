@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="D3D11Renderer.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="DxHelp.hpp" />
     <ClInclude Include="D3D11Timer.hpp" />
     <ClInclude Include="FrameBuffer.hpp" />
+    <ClInclude Include="InputManager.hpp" />
     <ClInclude Include="Particle.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="Scene.hpp" />

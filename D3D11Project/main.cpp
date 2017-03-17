@@ -8,6 +8,7 @@
 #include "ParticleSystem.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
+#include "InputManager.hpp"
 
 int main()
 {
@@ -21,6 +22,8 @@ int main()
     ID3D11DeviceContext* deviceContext = renderer.mDeviceContext;
 
     ParticleSystem particleSystem(device, deviceContext);
+    
+    InputManager inputManager(renderer.mGLFWwindow);
 
     FrameBuffer frameBuffer(device, deviceContext, width, height);
     Camera camera(60.f, &frameBuffer);
@@ -57,7 +60,7 @@ int main()
         CPUTIMER(dt);
         D3D11TIMER(GPUdt, device, deviceContext);
         // +++ UPDATE +++ //
-        camera.Update(20.f, 2000.f, dt);
+        camera.Update(20.f, 2000.f, dt, &inputManager);
         particleSystem.Update(&scene, dt);
         // --- UPDATE --- //
 
