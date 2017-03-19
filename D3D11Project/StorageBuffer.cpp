@@ -87,14 +87,14 @@ unsigned int StorageBuffer::GetStride()
     return mStride;
 }
 
-void StorageBuffer::Write(void* data, unsigned int size, unsigned int offset)
+void StorageBuffer::Write(void* data, unsigned int byteSize, unsigned int offset)
 {
-    assert(offset + size <= mSize);
+    assert(offset + byteSize <= mSize);
 
     D3D11_MAPPED_SUBRESOURCE mappedResource;
     ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
     DxAssert(mpDeviceContext->Map(mStagingBuff, 0, D3D11_MAP_WRITE, 0, &mappedResource), S_OK);
-    memcpy(mappedResource.pData, reinterpret_cast<unsigned char*>(data) + offset, size);
+    memcpy(mappedResource.pData, reinterpret_cast<unsigned char*>(data) + offset, byteSize);
     mpDeviceContext->Unmap(mStagingBuff, 0);
 
     mpDeviceContext->CopyResource(mBuff, mStagingBuff);

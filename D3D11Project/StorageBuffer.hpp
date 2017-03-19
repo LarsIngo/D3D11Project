@@ -29,9 +29,9 @@ class StorageBuffer
         
         // Write to storage buffer.
         // data Data to write.
-        // size Size of data in bytes.
+        // byteSize Size of data in bytes.
         // off Offset to write data in bytes.
-        void Write(void* data, unsigned int size, unsigned int offset);
+        void Write(void* data, unsigned int byteSize, unsigned int offset);
 
         // Buffer.
         ID3D11Buffer* mBuff;

@@ -43,6 +43,9 @@
     <Filter Include="InputManager">
       <UniqueIdentifier>{e3ee95d4-4ca7-4a81-8514-013bd4979166}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{00cc6b41-f519-4486-a6bb-c08a79bc6cdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Renderer.hpp">
@@ -86,9 +89,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\Particles_Render_GS.hlsl" />
-    <None Include="resources\shaders\Particles_Render_PS.hlsl" />
-    <None Include="resources\shaders\Particles_Render_VS.hlsl" />
-    <None Include="resources\shaders\Particles_Update_CS.hlsl" />
+    <None Include="resources\shaders\Particles_Render_GS.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="resources\shaders\Particles_Render_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="resources\shaders\Particles_Render_VS.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="resources\shaders\Particles_Update_CS.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

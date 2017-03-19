@@ -13,7 +13,7 @@ class FrameBuffer
         // height Height in pixels.
         // bindFlags Bind flags. DEFAULT [D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS]
 		// miscFlags Misc flags. DEFAULT [0]
-        // initTexture Texture make frame buffer. DEFAULT [nullptr]
+        // initTexture Initialised texture. DEFAULT [nullptr]
         FrameBuffer(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, unsigned int width, unsigned int height, UINT bindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS, UINT miscFlags = 0, ID3D11Texture2D* initTexture = nullptr);
 
         // Destructor.

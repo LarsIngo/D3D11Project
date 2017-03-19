@@ -53,7 +53,7 @@ class ParticleSystem
             glm::mat4 vpMatrix;
             glm::vec3 lensPosition;
             glm::vec3 lensUpDirection;
-            float pad[6];
+            float pad[2];
         } mRenderMetaData;
         ID3D11ShaderResourceView* mRenderMetaDataBuffer;
 };

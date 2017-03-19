@@ -4,7 +4,7 @@ struct Particle
     float4 position;
     float4 velocity;
     float4 color;
-    float4 pad;
+    float4 scale;
 };
 // Input particles.
 StructuredBuffer<Particle> g_InputParticles : register(t0);

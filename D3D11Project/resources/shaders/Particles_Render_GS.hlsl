@@ -22,7 +22,7 @@ struct MetaData
     float4x4 vpMatrix;
     float3 lensPosition;
     float3 lensUpDirection;
-    float pad[6];
+    float pad[2];
 };
 // Meta buffer.
 StructuredBuffer<MetaData> g_MetaBuffer : register(t0);
