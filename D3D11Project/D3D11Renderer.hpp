@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _DEBUG
+#define BUILD_ENABLE_D3D11_DEBUG
+#endif
+
 #include <GLFW/glfw3.h>
 #include <d3d11.h>
 class FrameBuffer;

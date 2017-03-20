@@ -29,14 +29,14 @@ int main()
     Camera camera(60.f, &frameBuffer);
     camera.mPosition.z = -5.f;
 
-    Scene scene(device, deviceContext, 1024 * 1024);
+    int lenX = 1024;
+    int lenY = 1024;
+    Scene scene(device, deviceContext, lenX * lenY);
     {
         std::vector<Particle> particleList;
         Particle particle;
         float spaceing = 1.f;
         float speed = 0.1f;
-        int lenX = 1024;
-        int lenY = 1024;
         particle.scale = glm::vec4(spaceing / 2.f, spaceing / 2.f, 0.f, 0.f);
         for (int y = 0; y < lenY; ++y)
         {
@@ -53,28 +53,48 @@ int main()
     // --- INIT --- //
 
     // +++ MAIN LOOP +++ //
-    float dt = 1.f;
-    float GPUdt = 1.f;
-    while (renderer.Running())
     {
-        glm::clamp(dt, 1.f / 6000.f, 1.f / 60.f);
-        std::cout << "CPU TIMER: " << 1000.f * dt << " ms | FPS: " << 1.f / dt << " | GPU: " <<  1000.f * GPUdt << " ms" << std::endl;
-        CPUTIMER(dt);
-        D3D11TIMER(GPUdt, device, deviceContext);
-        // +++ UPDATE +++ //
-        camera.Update(20.f, 2.f, dt, &inputManager);
-        particleSystem.Update(&scene, dt);
-        // --- UPDATE --- //
+        float dt = 1.f;
+        D3D11Timer gpuComputeTimer(device, deviceContext);
+        D3D11Timer gpuGraphicsTimer(device, deviceContext);
+        while (renderer.Running())
+        {
+            glm::clamp(dt, 1.f / 6000.f, 1.f / 60.f);
+            bool cpuProfile = inputManager.KeyPressed(GLFW_KEY_F1);
+            bool gpuProfile = inputManager.KeyPressed(GLFW_KEY_F2);
+            {
+                CPUTIMER(dt);
+                // +++ UPDATE +++ //
+                if (gpuProfile) gpuComputeTimer.Start();
+                camera.Update(20.f, 2.f, dt, &inputManager);
+                particleSystem.Update(&scene, dt);
+                if (gpuProfile) gpuComputeTimer.Stop();
+                // --- UPDATE --- //
 
-        // +++ RENDER +++ //
-        camera.mpFrameBuffer->Clear(0.2f, 0.2f, 0.2f);
+                // +++ RENDER +++ //
+                if (gpuProfile) gpuGraphicsTimer.Start();
+                camera.mpFrameBuffer->Clear(0.2f, 0.2f, 0.2f);
+                particleSystem.Render(&scene, &camera);
+                if (gpuProfile) gpuGraphicsTimer.Stop();
+                // --- RENDER --- //
 
-        particleSystem.Render(&scene, &camera);
-        // --- RENDER --- //
-
-        // +++ PRESENET +++ //
-        renderer.Present(camera.mpFrameBuffer);
-        // --- PRESENET --- //
+                // +++ PRESENET +++ //
+                renderer.Present(camera.mpFrameBuffer);
+                // --- PRESENET --- //
+            }
+            // +++ PERFORMANCE OUTPUT +++ //
+            if (cpuProfile)
+            {
+                std::cout << "CPU(Delta time): " << 1000.f * dt << " ms | FPS: " << 1.f / dt << std::endl;
+            }
+            if (gpuProfile)
+            {
+                float computeTime = 1000.f * gpuComputeTimer.GetTime();
+                float graphicsTime = 1000.f * gpuGraphicsTimer.GetTime();
+                std::cout << "GPU(Total) : " << computeTime + graphicsTime << " ms | GPU(Compute): " << computeTime << " ms | GPU(Graphics) : " << graphicsTime << " ms" << std::endl;
+            }
+            // --- PERFORMANCE OUTPUT --- //
+        }
     }
     // --- MAIN LOOP --- //
 

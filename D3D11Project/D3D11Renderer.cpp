@@ -92,11 +92,15 @@ void D3D11Renderer::InitialiseD3D11()
     scDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;	        // This makes the display driver select the most efficient technique.
     scDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;  // Alt-enter fullscreen.
 
+    UINT createDeviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifdef BUILD_ENABLE_D3D11_DEBUG
+    createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
     DxAssert(D3D11CreateDeviceAndSwapChain(
         nullptr,					// Use the default adapter.
         D3D_DRIVER_TYPE_HARDWARE,	// Use the graphics card for rendering. Other options include software emulation.
         NULL,						// NULL since we don't use software emulation.
-        D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_BGRA_SUPPORT,	// Dbg creation flags.
+        createDeviceFlags,	// Dbg creation flags.
         nullptr,					// Array of feature levels to try using. With null the following are used 11.0, 10.1, 10.0, 9.3, 9.2, 9.1.
         0,							// The array above has 0 elements.
         D3D11_SDK_VERSION,			// Always use this.
