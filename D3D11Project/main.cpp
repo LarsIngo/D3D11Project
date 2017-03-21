@@ -10,6 +10,8 @@
 #include "Camera.hpp"
 #include "InputManager.hpp"
 
+//#define SYNC_COMPUTE_GRAPHICS
+
 int main()
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -54,12 +56,14 @@ int main()
 
     // +++ MAIN LOOP +++ //
     {
-        float dt = 1.f;
+        float dt = 0.f;
+        float totalTime = 0.f;
+        unsigned int frameCount = 0;
         D3D11Timer gpuComputeTimer(device, deviceContext);
         D3D11Timer gpuGraphicsTimer(device, deviceContext);
         while (renderer.Running())
         {
-            glm::clamp(dt, 1.f / 6000.f, 1.f / 60.f);
+            //glm::clamp(dt, 1.f / 6000.f, 1.f / 60.f);
             bool cpuProfile = inputManager.KeyPressed(GLFW_KEY_F1);
             bool gpuProfile = inputManager.KeyPressed(GLFW_KEY_F2);
             {
@@ -68,21 +72,35 @@ int main()
                 if (gpuProfile) gpuComputeTimer.Start();
                 camera.Update(20.f, 2.f, dt, &inputManager);
                 particleSystem.Update(&scene, dt);
-                if (gpuProfile) gpuComputeTimer.Stop();
+                if (gpuProfile)
+                {
+                    gpuComputeTimer.Stop();
+#ifdef SYNC_COMPUTE_GRAPHICS
+                    gpuComputeTimer.CalculateTime();
+#endif
+                }
                 // --- UPDATE --- //
 
                 // +++ RENDER +++ //
                 if (gpuProfile) gpuGraphicsTimer.Start();
                 camera.mpFrameBuffer->Clear(0.2f, 0.2f, 0.2f);
                 particleSystem.Render(&scene, &camera);
-                if (gpuProfile) gpuGraphicsTimer.Stop();
+                if (gpuProfile)
+                {
+                    gpuGraphicsTimer.Stop();
+#ifdef SYNC_COMPUTE_GRAPHICS
+                    gpuGraphicsTimer.CalculateTime();
+#endif
+                }
                 // --- RENDER --- //
 
                 // +++ PRESENET +++ //
                 renderer.Present(camera.mpFrameBuffer);
                 // --- PRESENET --- //
             }
-            // +++ PERFORMANCE OUTPUT +++ //
+            // +++ PROFILING +++ //
+            ++frameCount;
+            totalTime += dt;
             if (cpuProfile)
             {
                 std::cout << "CPU(Delta time): " << 1000.f * dt << " ms | FPS: " << 1.f / dt << std::endl;
@@ -93,7 +111,11 @@ int main()
                 float graphicsTime = 1000.f * gpuGraphicsTimer.GetTime();
                 std::cout << "GPU(Total) : " << computeTime + graphicsTime << " ms | GPU(Compute): " << computeTime << " ms | GPU(Graphics) : " << graphicsTime << " ms" << std::endl;
             }
-            // --- PERFORMANCE OUTPUT --- //
+            if (inputManager.KeyPressed(GLFW_KEY_F3))
+            {
+                std::cout << "CPU(Average delta time) : " << totalTime / frameCount * 1000.f << " ms" << std::endl;
+            }
+            // --- PROFILING --- //
         }
     }
     // --- MAIN LOOP --- //

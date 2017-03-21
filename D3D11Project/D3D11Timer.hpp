@@ -12,6 +12,7 @@ class D3D11Timer {
             mpDevice = pDevice;
             mpDeviceContext = pDeviceContext;
             mActive = false;
+            mAccurateTime = false;
 
             D3D11_QUERY_DESC desc;
             desc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
@@ -36,6 +37,7 @@ class D3D11Timer {
         {
             assert(!mActive);
             mActive = true;
+            mAccurateTime = false;
 
             mpDeviceContext->Begin(mDisjoint);
             mpDeviceContext->End(mStart);
@@ -51,9 +53,15 @@ class D3D11Timer {
             mpDeviceContext->End(mDisjoint);
         }
 
-        // Get time from start to stop in seconds.
-        float GetTime()
+        // Stalls CPU/GPU to get results.
+        void CalculateTime()
         {
+            assert(!mActive);
+
+            if (mAccurateTime) return;
+
+            mAccurateTime = true;
+
             UINT64 startTime = 0;
             while (mpDeviceContext->GetData(mStart, &startTime, sizeof(startTime), 0) != S_OK);
 
@@ -64,14 +72,18 @@ class D3D11Timer {
             while (mpDeviceContext->GetData(mDisjoint, &disjointData, sizeof(disjointData), 0) != S_OK);
 
             assert(disjointData.Disjoint == FALSE);
-            if (disjointData.Disjoint == FALSE)
-            {
-                UINT64 delta = endTime - startTime;
-                double frequency = static_cast<double>(disjointData.Frequency);
-                return static_cast<float>((delta / frequency));
-            }
 
-            return 0.f;
+            UINT64 delta = endTime - startTime;
+            double frequency = static_cast<double>(disjointData.Frequency);
+            mTime = static_cast<float>((delta / frequency));
+        }
+
+        // Get time from start to stop in seconds.
+        float GetTime()
+        {
+            if (!mAccurateTime) CalculateTime();
+
+            return mTime;
         }
 
         // Whether timer is active.
@@ -87,4 +99,6 @@ class D3D11Timer {
         ID3D11Query* mStart;
         ID3D11Query* mStop;
         bool mActive;
+        bool mAccurateTime;
+        float mTime;
 };
