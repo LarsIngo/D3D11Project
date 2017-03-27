@@ -61,8 +61,6 @@ namespace DxHelp
     // device D3D11 device.
     // shaderPath Path to shader.
     // shader Created shader.
-    // inputDesc Input layout description.
-    // inputLayout Input layout.
     void CreateVS(ID3D11Device* device, const char* shaderPath, const char* entry, ID3D11VertexShader** shader);
 
     // Create geometry shader.
