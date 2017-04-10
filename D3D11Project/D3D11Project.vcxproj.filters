@@ -87,6 +87,9 @@
     <ClInclude Include="InputManager.hpp">
       <Filter>InputManager</Filter>
     </ClInclude>
+    <ClInclude Include="Profiler.hpp">
+      <Filter>Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Particles_Render_GS.hlsl">

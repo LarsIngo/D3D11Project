@@ -13,6 +13,8 @@ class D3D11Timer {
             mpDeviceContext = pDeviceContext;
             mActive = false;
             mAccurateTime = false;
+            mDeltaTime = 0;
+            mBeginTime = 0;
 
             D3D11_QUERY_DESC desc;
             desc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
@@ -75,15 +77,21 @@ class D3D11Timer {
 
             UINT64 delta = endTime - startTime;
             double frequency = static_cast<double>(disjointData.Frequency);
-            mTime = static_cast<float>((delta / frequency));
+            mDeltaTime = (delta / frequency) * 1000000000;
+            mBeginTime = (startTime / frequency) * 1000000000;
         }
 
-        // Get time from start to stop in seconds.
-        float GetTime()
+        // Get time from start to stop in nanoseconds.
+        UINT64 GetDeltaTime()
         {
-            if (!mAccurateTime) CalculateTime();
-
-            return mTime;
+            CalculateTime();
+            return mDeltaTime;
+        }
+        
+        UINT64 GetBeginTime()
+        {
+            CalculateTime();
+            return mBeginTime;
         }
 
         // Whether timer is active.
@@ -100,5 +108,6 @@ class D3D11Timer {
         ID3D11Query* mStop;
         bool mActive;
         bool mAccurateTime;
-        float mTime;
+        UINT64 mDeltaTime;
+        UINT64 mBeginTime;
 };
