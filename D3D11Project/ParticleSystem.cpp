@@ -70,7 +70,7 @@ void ParticleSystem::Update(Scene* scene, float dt)
     }
     mpDeviceContext->CSSetUnorderedAccessViews(0, 1, &scene->mParticleBuffer->GetOutputBuffer()->mUAV, NULL);
 
-    mpDeviceContext->Dispatch(static_cast<unsigned int>(ceil(scene->mParticleCount / 256.f)),1,1);
+    mpDeviceContext->Dispatch(static_cast<unsigned int>(ceil(scene->mParticleCount / 128.f)),1,1);
 
     mpDeviceContext->CSSetShader(NULL, NULL, NULL);
     void* p[1] = { NULL };
