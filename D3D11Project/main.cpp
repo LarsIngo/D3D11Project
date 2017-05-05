@@ -77,10 +77,10 @@ int main()
             {
                 CPUTIMER(dt);
                 // +++ UPDATE +++ //
-                if (gpuProfile) gpuComputeTimer.Start();
+                if (gpuProfile && skipTime > 0.f) gpuComputeTimer.Start();
                 camera.Update(20.f, 2.f, dt, &inputManager);
                 particleSystem.Update(&scene, dt);
-                if (gpuProfile)
+                if (gpuProfile && skipTime > 0.f)
                 {
                     gpuComputeTimer.Stop();
                     // SYNC_COMPUTE_GRAPHICS
@@ -89,10 +89,10 @@ int main()
                 // --- UPDATE --- //
 
                 // +++ RENDER +++ //
-                if (gpuProfile) gpuGraphicsTimer.Start();
+                if (gpuProfile && skipTime > 0.f) gpuGraphicsTimer.Start();
                 camera.mpFrameBuffer->Clear(0.2f, 0.2f, 0.2f);
                 particleSystem.Render(&scene, &camera);
-                if (gpuProfile)
+                if (gpuProfile && skipTime > 0.f)
                 {
                     gpuGraphicsTimer.Stop();
                     if (syncComputeGraphics) gpuGraphicsTimer.CalculateTime();
