@@ -42,7 +42,7 @@ void D3D11Renderer::Close()
 void D3D11Renderer::Present(FrameBuffer* frameBuffer)
 {
     mWinFrameBuffer->Copy(frameBuffer);
-    mSwapChain->Present(0, 0);
+    DxAssert(mSwapChain->Present(0, 0), S_OK);
 }
 
 void D3D11Renderer::InitialiseGLFW()

@@ -11,7 +11,7 @@
 #include "InputManager.hpp"
 #include "Profiler.hpp"
 
-#define SKIP_TIME 5.f
+#define SKIP_TIME_NANO 5000000000
 
 int main()
 {
@@ -58,10 +58,14 @@ int main()
 
     // +++ MAIN LOOP +++ //
     {
+        double startTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        double currentTime = 0.0;
+        double totalTime = 0.0;
+        double totalMeasureTime = 0.0;
+        float mt = 0.f;
         float dt = 0.f;
-        double totalTime = 0.f;
-        float skipTime = -SKIP_TIME;
-        std::cout << "+++ Skip time: " << SKIP_TIME << " seconds. (Wait for program to stabilize) +++" << std::endl;
+
+        std::cout << "+++ Skip time: " << SKIP_TIME_NANO << " nanoseconds. (Wait for program to stabilize) +++" << std::endl;
         std::cout << "Hold F1 to sync compute/graphics. " << std::endl;
         std::cout << "Hold F2 to profile. " << std::endl;
         std::cout << "Hold F3 to show average frame time. " << std::endl;
@@ -73,14 +77,19 @@ int main()
         {
             //glm::clamp(dt, 1.f / 6000.f, 1.f / 60.f);
             bool syncComputeGraphics = inputManager.KeyPressed(GLFW_KEY_F1);
-            bool gpuProfile = inputManager.KeyPressed(GLFW_KEY_F2);
+            //bool gpuProfile = inputManager.KeyPressed(GLFW_KEY_F2);
             {
-                CPUTIMER(dt);
+                double lastTime = currentTime;
+                currentTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+                dt = currentTime - lastTime;
+                totalTime = currentTime - startTime;
+
+                CPUTIMER(mt);
                 // +++ UPDATE +++ //
-                if (gpuProfile && skipTime > 0.f) gpuComputeTimer.Start();
+                if (totalTime > SKIP_TIME_NANO) gpuComputeTimer.Start();
                 camera.Update(20.f, 2.f, dt, &inputManager);
                 particleSystem.Update(&scene, dt);
-                if (gpuProfile && skipTime > 0.f)
+                if (totalTime > SKIP_TIME_NANO)
                 {
                     gpuComputeTimer.Stop();
                     // SYNC_COMPUTE_GRAPHICS
@@ -89,15 +98,19 @@ int main()
                 // --- UPDATE --- //
 
                 // +++ RENDER +++ //
-                if (gpuProfile && skipTime > 0.f) gpuGraphicsTimer.Start();
+                if (totalTime > SKIP_TIME_NANO) gpuGraphicsTimer.Start();
                 camera.mpFrameBuffer->Clear(0.2f, 0.2f, 0.2f);
                 particleSystem.Render(&scene, &camera);
-                if (gpuProfile && skipTime > 0.f) gpuGraphicsTimer.Stop();
+                if (totalTime > SKIP_TIME_NANO) gpuGraphicsTimer.Stop();
                 // --- RENDER --- //
 
-                // Wait on CPU for compute and graphics to complete.
-                gpuComputeTimer.CalculateTime();
-                gpuGraphicsTimer.CalculateTime();
+                
+                if (totalTime > SKIP_TIME_NANO)
+                {
+                    // Wait on CPU for compute and graphics to complete.
+                    gpuComputeTimer.CalculateTime();
+                    gpuGraphicsTimer.CalculateTime();
+                }
             }
 
             // +++ PRESENET +++ //
@@ -105,27 +118,26 @@ int main()
             // --- PRESENET --- //
 
             // +++ PROFILING +++ //
-            skipTime += dt;
-            if (skipTime > 0.f)
+            if (totalTime > SKIP_TIME_NANO)
             {
                 if (frameCount == 0)
                     std::cout << "--- Skip time over --- " << std::endl << std::endl;
 
-                totalTime += dt;
+                totalMeasureTime += mt;
                 ++frameCount;
 
-                if (gpuProfile)
+                if (inputManager.KeyPressed(GLFW_KEY_F2))
                 {
                     float computeTime = 1.f / 1000000.f * gpuComputeTimer.GetDeltaTime();
                     float graphicsTime = 1.f / 1000000.f * gpuGraphicsTimer.GetDeltaTime();
                     std::cout << "GPU(Total) : " << computeTime + graphicsTime << " ms | GPU(Compute): " << computeTime << " ms | GPU(Graphics) : " << graphicsTime << " ms" << std::endl;
                     profiler.Rectangle(gpuComputeTimer.GetBeginTime(), 1, gpuComputeTimer.GetDeltaTime(), 1, 0.f, 0.f, 1.f);
                     profiler.Rectangle(gpuGraphicsTimer.GetBeginTime(), 0, gpuGraphicsTimer.GetDeltaTime(), 1, 0.f, 1.f, 0.f);
-                    profiler.Point(gpuGraphicsTimer.GetBeginTime(), totalTime / frameCount * 1000000, syncComputeGraphics ? "'-ro'" : "'-bo'");
+                    profiler.Point(gpuGraphicsTimer.GetBeginTime(), totalMeasureTime / frameCount, syncComputeGraphics ? "'-ro'" : "'-bo'");
                 }
                 if (inputManager.KeyPressed(GLFW_KEY_F3))
                 {
-                    std::cout << "CPU(Average delta time) : " << totalTime / frameCount * 1000.f << " ms" << std::endl;
+                    std::cout << "CPU(Average delta time) : " << totalMeasureTime / frameCount / 1000000.f << " ms" << std::endl;
                 }
             }
             // --- PROFILING --- //
