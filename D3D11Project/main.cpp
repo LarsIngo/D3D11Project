@@ -59,7 +59,7 @@ int main()
     // +++ MAIN LOOP +++ //
     {
         float dt = 0.f;
-        float totalTime = 0.f;
+        double totalTime = 0.f;
         float skipTime = -SKIP_TIME;
         std::cout << "+++ Skip time: " << SKIP_TIME << " seconds. (Wait for program to stabilize) +++" << std::endl;
         std::cout << "Hold F1 to sync compute/graphics. " << std::endl;
@@ -92,17 +92,18 @@ int main()
                 if (gpuProfile && skipTime > 0.f) gpuGraphicsTimer.Start();
                 camera.mpFrameBuffer->Clear(0.2f, 0.2f, 0.2f);
                 particleSystem.Render(&scene, &camera);
-                if (gpuProfile && skipTime > 0.f)
-                {
-                    gpuGraphicsTimer.Stop();
-                    if (syncComputeGraphics) gpuGraphicsTimer.CalculateTime();
-                }
+                if (gpuProfile && skipTime > 0.f) gpuGraphicsTimer.Stop();
                 // --- RENDER --- //
 
-                // +++ PRESENET +++ //
-                renderer.Present(camera.mpFrameBuffer);
-                // --- PRESENET --- //
+                // Wait on CPU for compute and graphics to complete.
+                gpuComputeTimer.CalculateTime();
+                gpuGraphicsTimer.CalculateTime();
             }
+
+            // +++ PRESENET +++ //
+            renderer.Present(camera.mpFrameBuffer);
+            // --- PRESENET --- //
+
             // +++ PROFILING +++ //
             skipTime += dt;
             if (skipTime > 0.f)
