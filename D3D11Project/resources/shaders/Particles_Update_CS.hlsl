@@ -1,4 +1,4 @@
-#define ITER 1500000.f
+#define ITER 2000000.f
 
 // Particle.
 struct Particle
@@ -24,7 +24,7 @@ struct MetaData
 // Meta buffer.
 StructuredBuffer<MetaData> g_MetaBuffer : register(t1);
 
-[numthreads(128, 1, 1)]
+[numthreads(1, 1, 1)]
 void main(uint3 threadID : SV_DispatchThreadID)
 {
     MetaData metaData = g_MetaBuffer[0];
